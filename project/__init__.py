@@ -1,37 +1,31 @@
-from flask import Flask, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from flask_restplus import Resource, Api
 import os
 
-app = Flask(__name__)
-
-api = Api(app)
-
-# set config
-app_settings = os.getenv('APP_SETTINGS')
-app.config.from_object(app_settings)
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 
 # instantiate the db
-db = SQLAlchemy(app)
+db = SQLAlchemy()
 
-# Artist Model
-class Artist(db.Model):
-    __tablename__ = 'Artist'
+# application factory pattern
+def create_app(script_info=None):
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    city = db.Column(db.String(120))
-    state = db.Column(db.String(120))
-    phone = db.Column(db.String(120))
-    genres = db.Column(db.String(120))
-    image_link = db.Column(db.String(500))
-    facebook_link = db.Column(db.String(500))
+    # instantiate app
+    app = Flask(__name__)
 
-class Ping(Resource):
-    def get(self):
-        return {
-            'status': 'success',
-            'message': 'pong!'
-        }
+    # set config
+    app_settings = os.getenv('APP_SETTINGS')
+    app.config.from_object(app_settings)
 
-api.add_resource(Ping, '/ping')
+    # set up extensions
+    db.init_app(app)
+
+    # register blueprints
+    from project.api.ping import ping_blueprint
+    app.register_blueprint(ping_blueprint)
+
+    # shell context for flask cli
+    @app.shell_context_processor
+    def ctx():
+        return { 'app': app, 'db': db }
+    
+    return app
