@@ -1,0 +1,2 @@
+CREATE DATABASE fyyur_dev;
+CREATE DATABASE fyyur_test;
