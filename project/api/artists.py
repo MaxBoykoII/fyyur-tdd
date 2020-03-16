@@ -5,6 +5,11 @@ from project.forms import ArtistForm
 
 artists_blueprint = Blueprint('artists', __name__, template_folder='../templates')
 
+@artists_blueprint.route('/artists', methods=['GET'])
+def artists():
+    data = db.session.query(Artist.id, Artist.name).all()
+    return render_template('pages/artists.html', artists=data)
+
 @artists_blueprint.route('/artists/create', methods=['GET'])
 def create_artist_form():
     form = ArtistForm()
@@ -31,7 +36,8 @@ def create_artist_submission():
 
         flash('Artist ' + request.form['name'] + ' was successfully listed!')
 
-    except:
+    except Exception as err:
+        print(err)
         db.session.rollback()
         status_code = 500
 
@@ -42,4 +48,3 @@ def create_artist_submission():
         db.session.close()
     
     return render_template('pages/home.html'), status_code
-

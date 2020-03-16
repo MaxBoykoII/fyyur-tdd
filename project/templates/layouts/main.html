@@ -57,7 +57,7 @@
             </li>
           </ul>
           <ul class="nav navbar-nav">
-           
+            <li {% if request.endpoint == 'artists.artists' %} class="active" {% endif %}><a href="{{ url_for('artists.artists') }}">Artists</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>

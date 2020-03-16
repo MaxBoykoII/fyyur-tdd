@@ -1,6 +1,13 @@
 import json
 from project.api.models import Artist
 
+def test_get_artists(test_app, test_database):
+    client = test_app.test_client()
+    resp = client.get('/artists')
+
+    assert resp.status_code == 200
+    assert resp.content_type == 'text/html; charset=utf-8'
+
 def test_get_create_artist_form(test_app):
     client = test_app.test_client()
     resp = client.get('/artists/create')
