@@ -19,18 +19,14 @@ def create_app(script_info=None):
     # set up extensions
     db.init_app(app)
 
-    # set home route
-    '''
-    @app.route('/')
-    def index():
-        return render_template('pages/home.html')
-    '''
-
     # register blueprints
     from project.api.home import home_blueprint
+    from project.api.artists import artists_blueprint
     from project.api.ping import ping_blueprint
+    
     app.register_blueprint(home_blueprint)
     app.register_blueprint(ping_blueprint)
+    app.register_blueprint(artists_blueprint)
 
     # shell context for flask cli
     @app.shell_context_processor
