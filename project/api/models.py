@@ -1,8 +1,9 @@
 from project import db
 
+
 # Artist Model
 class Artist(db.Model):
-    __tablename__ = 'Artist'
+    __tablename__ = "Artist"
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
@@ -12,4 +13,3 @@ class Artist(db.Model):
     genres = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(500))
-
