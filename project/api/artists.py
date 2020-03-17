@@ -1,6 +1,7 @@
-from flask import Blueprint, request, flash, render_template
-from project.api.models import Artist
+from flask import Blueprint, flash, render_template, request
+
 from project import db
+from project.api.models import Artist
 from project.forms import ArtistForm
 
 artists_blueprint = Blueprint("artists", __name__, template_folder="../templates")
