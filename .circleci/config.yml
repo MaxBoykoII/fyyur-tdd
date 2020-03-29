@@ -23,7 +23,7 @@ jobs:
     - run:
         name: Run production image
         command: |
-          docker-compose -f "./docker-compose.ci.build.yml" up -d
+          docker-compose -f ./docker-compose.ci.build.yml up -d
         
     - run: 
         name: Test production image
@@ -32,3 +32,13 @@ jobs:
           docker-compose exec fyyur flake8 project
           docker-compose exec fyyur black project --check
           docker-compose exec fyyur isort project/**/*.py --check-only
+
+    - run:
+        name: Deploy to Heroku
+        command: |
+          apk add --no-cache curl
+          chmod +x ./release.sh
+          docker build --tag $HEROKU_REGISTRY_IMAGE --file ./Dockerfile.prod "."
+          docker login -u _ -p $HEROKU_AUTH_TOKEN registry.heroku.com
+          docker push $HEROKU_REGISTRY_IMAGE
+          ./release.sh
