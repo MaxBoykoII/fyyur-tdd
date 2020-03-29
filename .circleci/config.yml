@@ -1,0 +1,35 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: cimg/base:2020.01
+
+    working_directory: ~/repo
+
+    steps:
+    - checkout
+
+    - run:
+        name: Build and push production image
+        command: |
+          docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY_USER
+          docker pull $IMAGE:latest || true
+          docker build
+            --cache-from $IMAGE:latest
+            --tag $IMAGE:$CIRCLE_BUILD_NUM
+            --file ./Dockerfile.prod
+            "."
+          docker push $IMAGE:$CIRCLE_BUILD_NUM
+      
+    - run:
+        name: Run production image
+        command: |
+          docker-compose -f ./docker-compose.ci.build.yml up -d
+        
+    - run: 
+        name: Test production image
+        command: |
+          docker-compose exec fyyur pytest "project/tests" -p no:warnings
+          docker-compose exec fyyur flake8 project
+          docker-compose exec fyyur black project --check
+          docker-compose exec fyyur isort project/**/*.py --check-only
