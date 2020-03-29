@@ -23,6 +23,11 @@ RUN pip install -r requirements.txt
 # add app
 COPY . /usr/src/app
 
+# add entrypoint.sh, which, though not needed for heroku,
+# is still needed for testing the production image within circle ci
+COPY ./entrypoint.sh /usr/src/app/entrypoint.sh
+RUN chmod +x /usr/src/app/entrypoint.sh
+
 # add and run as non-root user
 RUN adduser -D fyyur
 USER fyyur
