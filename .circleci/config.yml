@@ -7,6 +7,7 @@ jobs:
     working_directory: ~/repo
 
     steps:
+
     - checkout
 
     - setup_remote_docker
@@ -16,7 +17,7 @@ jobs:
         command: |
           docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN
           docker pull $IMAGE:latest || true
-          docker build --cache-from $IMAGE:latest --tag $IMAGE:$CIRCLE_BUILD_NUM --file ./Dockerfile.prod "."
+          docker build --cache-from $IMAGE:latest --tag $IMAGE:$CIRCLE_BUILD_NUM --tag $IMAGE:latest --file ./Dockerfile.prod "."
           docker push $IMAGE:$CIRCLE_BUILD_NUM
       
     - run:
