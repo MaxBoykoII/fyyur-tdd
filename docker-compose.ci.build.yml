@@ -3,7 +3,7 @@ version: '3.7'
 services:
 
   fyyur:
-    image: $IMAGE:$CIRCLE_BUILD_NUM
+    image: $IMAGE:latest
     entrypoint: ['/usr/src/app/entrypoint.sh']
     ports:
       - 5001:5000
