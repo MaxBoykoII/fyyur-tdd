@@ -36,7 +36,6 @@ jobs:
     - run:
         name: Deploy to Heroku
         command: |
-          apk add --no-cache curl
           chmod +x ./release.sh
           docker build --tag $HEROKU_REGISTRY_IMAGE --file ./Dockerfile.prod "."
           docker login -u _ -p $HEROKU_AUTH_TOKEN registry.heroku.com
