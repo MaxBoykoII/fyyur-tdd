@@ -28,7 +28,7 @@ def create_app(script_info=None):
 
     # register blueprints
     from project.api.home import home_blueprint
-    from project.api.artists import artists_blueprint
+    from project.api.artists.views import artists_blueprint
     from project.api.ping import ping_blueprint
 
     app.register_blueprint(home_blueprint)

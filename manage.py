@@ -1,7 +1,7 @@
 from flask.cli import FlaskGroup
 
 from project import create_app, db
-from project.api.models import Artist
+from project.api.artists.models import Artist
 
 app = create_app()
 cli = FlaskGroup(create_app=create_app)

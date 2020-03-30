@@ -1,4 +1,4 @@
-from project.api.models import Artist
+from project.api.artists.models import Artist
 
 
 def test_get_artists(test_app, test_database):

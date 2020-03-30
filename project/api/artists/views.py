@@ -1,15 +1,16 @@
 from flask import Blueprint, flash, render_template, request
+from project.forms import ArtistForm
 
 from project import db
-from project.api.models import Artist
-from project.forms import ArtistForm
+from project.api.artists.models import Artist
+from project.api.artists.crud import get_artist_list, add_artist
 
 artists_blueprint = Blueprint("artists", __name__, template_folder="../templates")
 
 
 @artists_blueprint.route("/artists", methods=["GET"])
 def artists():
-    data = db.session.query(Artist.id, Artist.name).all()
+    data = get_artist_list()
     return render_template("pages/artists.html", artists=data)
 
 
@@ -34,8 +35,7 @@ def create_artist_submission():
             facebook_link=request.form.get("facebook_link"),
         )
 
-        db.session.add(artist)
-        db.session.commit()
+        add_artist(artist)
 
         flash("Artist " + request.form["name"] + " was successfully listed!")
 
