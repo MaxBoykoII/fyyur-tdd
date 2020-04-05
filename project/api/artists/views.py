@@ -3,7 +3,7 @@ from project.forms import ArtistForm
 
 from project import db
 from project.api.artists.models import Artist
-from project.api.artists.crud import get_artist_list, add_artist
+from project.api.artists.crud import get_artist_list, add_artist, get_artist_by_id
 
 artists_blueprint = Blueprint("artists", __name__, template_folder="../templates")
 
@@ -12,6 +12,34 @@ artists_blueprint = Blueprint("artists", __name__, template_folder="../templates
 def artists():
     data = get_artist_list()
     return render_template("pages/artists.html", artists=data)
+
+
+@artists_blueprint.route("/artists/<int:artist_id>")
+def show_artist(artist_id):
+    artist = get_artist_by_id(artist_id)
+
+    past_shows = []
+    upcoming_shows = []
+
+    data = {
+        "id": artist.id,
+        "name": artist.name,
+        "genres": artist.genres_list,
+        "city": artist.city,
+        "state": artist.state,
+        "phone": artist.phone,
+        "website": "https://www.gunsnpetalsband.com",
+        "facebook_link": artist.facebook_link,
+        "seeking_venue": True,
+        "seeking_description": "Looking for shows to perform at in the San Francisco Bay Area!",
+        "image_link": artist.image_link,
+        "past_shows": past_shows,
+        "upcoming_shows": upcoming_shows,
+        "past_shows_count": len(past_shows),
+        "upcoming_shows_count": len(upcoming_shows),
+    }
+
+    return render_template("pages/show_artist.html", artist=data)
 
 
 @artists_blueprint.route("/artists/create", methods=["GET"])

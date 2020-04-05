@@ -1,4 +1,5 @@
 import pytest
+from flask import template_rendered
 
 from project import create_app, db
 
@@ -17,3 +18,17 @@ def test_database():
     yield db
     db.session.remove()
     db.drop_all()
+
+
+@pytest.fixture
+def template_spy(test_app):
+    calls = []
+
+    def spy(sender, template, context, **extra):
+        calls.append((template, context))
+
+    template_rendered.connect(spy, test_app)
+
+    yield calls
+
+    template_rendered.disconnect(spy, test_app)
