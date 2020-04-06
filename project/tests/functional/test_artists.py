@@ -1,4 +1,5 @@
 from project.api.artists.models import Artist
+import pytest
 
 
 def test_get_artists(test_app, test_database):
@@ -148,3 +149,77 @@ def test_edit_artist_post(test_app, test_database, artist):
 
     for key, value in artist_data.items():
         assert value == updated_artist_dict[key]
+
+
+@pytest.mark.parametrize(
+    "search_term, results",
+    [
+        [
+            "A",
+            {
+                "count": 3,
+                "data": [
+                    {"id": 1, "name": "Guns N Petals", "num_upcoming_shows": 0},
+                    {"id": 2, "name": "Matt Quevado", "num_upcoming_shows": 0},
+                    {"id": 3, "name": "The Wild Sax Band", "num_upcoming_shows": 0},
+                ],
+            },
+        ],
+        [
+            "a",
+            {
+                "count": 3,
+                "data": [
+                    {"id": 1, "name": "Guns N Petals", "num_upcoming_shows": 0},
+                    {"id": 2, "name": "Matt Quevado", "num_upcoming_shows": 0},
+                    {"id": 3, "name": "The Wild Sax Band", "num_upcoming_shows": 0},
+                ],
+            },
+        ],
+        [
+            "band",
+            {
+                "count": 1,
+                "data": [
+                    {"id": 3, "name": "The Wild Sax Band", "num_upcoming_shows": 0}
+                ],
+            },
+        ],
+        [
+            "bAnd",
+            {
+                "count": 1,
+                "data": [
+                    {"id": 3, "name": "The Wild Sax Band", "num_upcoming_shows": 0}
+                ],
+            },
+        ],
+        ["", {"count": 0, "data": []}],
+    ],
+)
+def test_search_artists(
+    test_app, test_database, template_spy, artists, search_term, results
+):
+    assert len(template_spy) == 0
+
+    client = test_app.test_client()
+    resp = client.post(
+        "/artists/search",
+        data={"search_term": search_term},
+        content_type="multipart/form-data",
+    )
+
+    assert resp.status_code == 200
+    assert resp.content_type == "text/html; charset=utf-8"
+
+    assert len(template_spy) == 1
+
+    template, context = template_spy[0]
+
+    assert template.name == "pages/search_artists.html"
+
+    actual_results = context["results"]
+    actual_search_term = context["search_term"]
+
+    assert actual_results == results
+    assert actual_search_term == search_term

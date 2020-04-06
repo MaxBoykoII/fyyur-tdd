@@ -1,5 +1,6 @@
 from project import db
 from project.api.artists.models import Artist
+from sqlalchemy import func
 
 
 def get_artist_list():
@@ -26,3 +27,13 @@ def update_artist(artist, form):
     artist.facebook_link = form.get("facebook_link")
 
     db.session.commit()
+
+
+def search_artists_by_name(search_term):
+    if search_term is None or search_term == "":
+        return []
+    return (
+        db.session.query(Artist)
+        .filter(func.upper(Artist.name).contains(search_term.upper(), autoescape=True))
+        .all()
+    )

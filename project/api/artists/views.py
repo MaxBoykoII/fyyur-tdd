@@ -9,6 +9,7 @@ from project.api.artists.crud import (
     add_artist,
     get_artist_by_id,
     update_artist,
+    search_artists_by_name,
 )
 
 artists_blueprint = Blueprint("artists", __name__, template_folder="../templates")
@@ -137,3 +138,22 @@ def create_artist_submission():
         db.session.close()
 
     return render_template("pages/home.html"), status_code
+
+
+@artists_blueprint.route("/artists/search", methods=["POST"])
+def search_artists():
+    search_term = request.form.get("search_term", "")
+
+    artists = search_artists_by_name(search_term)
+    response = {
+        "count": len(artists),
+        "data": [
+            {"id": artist.id, "name": artist.name, "num_upcoming_shows": 0}
+            for artist in artists
+        ],
+    }
+    return render_template(
+        "pages/search_artists.html",
+        results=response,
+        search_term=request.form.get("search_term", ""),
+    )
