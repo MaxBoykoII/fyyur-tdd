@@ -1,10 +1,15 @@
-from flask import Blueprint, flash, render_template, request
+from flask import Blueprint, flash, render_template, request, redirect, url_for
 from project.forms import ArtistForm
 from collections import namedtuple
 
 from project import db
 from project.api.artists.models import Artist
-from project.api.artists.crud import get_artist_list, add_artist, get_artist_by_id
+from project.api.artists.crud import (
+    get_artist_list,
+    add_artist,
+    get_artist_by_id,
+    update_artist,
+)
 
 artists_blueprint = Blueprint("artists", __name__, template_folder="../templates")
 
@@ -71,6 +76,31 @@ def edit_artist(artist_id):
     form = ArtistForm(obj=form_data)
 
     return render_template("forms/edit_artist.html", form=form, artist=data)
+
+
+@artists_blueprint.route("/artists/<int:artist_id>/edit", methods=["POST"])
+def edit_artist_submission(artist_id):
+
+    try:
+        artist = get_artist_by_id(artist_id)
+        update_artist(artist, request.form)
+
+        flash("Artist " + request.form["name"] + " was successfully updated!")
+
+    except Exception as err:
+        print(err)
+        db.session.rollback()
+
+        flash(
+            "An error occurred. Artist "
+            + request.form["name"]
+            + " could not be updated."
+        )
+
+    finally:
+        db.session.close()
+
+    return redirect(url_for("artists.show_artist", artist_id=artist_id))
 
 
 @artists_blueprint.route("/artists/create", methods=["POST"])

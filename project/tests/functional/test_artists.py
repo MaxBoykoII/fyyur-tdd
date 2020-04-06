@@ -17,23 +17,8 @@ def test_get_create_artist_form(test_app):
     assert resp.content_type == "text/html; charset=utf-8"
 
 
-def test_get_artist(test_app, test_database, template_spy):
+def test_get_artist(test_app, test_database, template_spy, artist):
     assert len(template_spy) == 0
-
-    artist = Artist(
-        name="Brewmaster",
-        city="Columbus",
-        state="OH",
-        phone="614-399-3453",
-        genres="Bovine Rhapsody",
-        image_link="www.brewmaster.com/image.png",
-        facebook_link="www.facebook.com/brewie",
-    )
-
-    db = test_database
-
-    db.session.add(artist)
-    db.session.commit()
 
     client = test_app.test_client()
     resp = client.get("/artists/1")
@@ -67,9 +52,6 @@ def test_get_artist(test_app, test_database, template_spy):
     assert view_model["upcoming_shows"] == []
     assert view_model["past_shows_count"] == 0
     assert view_model["upcoming_shows_count"] == 0
-
-    db.session.delete(artist)
-    db.session.commit()
 
 
 def test_add_artist(test_app, test_database):
@@ -109,23 +91,8 @@ def test_add_artist(test_app, test_database):
     test_database.session.commit()
 
 
-def test_edit_artist(test_app, test_database, template_spy):
+def test_edit_artist_get(test_app, test_database, template_spy, artist):
     assert len(template_spy) == 0
-
-    artist = Artist(
-        name="Brewmaster",
-        city="Columbus",
-        state="OH",
-        phone="614-399-3453",
-        genres="Bovine Rhapsody",
-        image_link="www.brewmaster.com/image.png",
-        facebook_link="www.facebook.com/brewie",
-    )
-
-    db = test_database
-
-    db.session.add(artist)
-    db.session.commit()
 
     client = test_app.test_client()
     resp = client.get("/artists/1/edit")
@@ -156,5 +123,28 @@ def test_edit_artist(test_app, test_database, template_spy):
     )
     assert form_model["image_link"] == artist.image_link
 
-    db.session.delete(artist)
-    db.session.commit()
+
+def test_edit_artist_post(test_app, test_database, artist):
+    artist_data = {
+        "name": "The Mighty Milk Master",
+        "city": "Plain City",
+        "state": "OH",
+        "phone": "614-399-3453",
+        "genres": "Alternative",
+        "image_link": "www.milkmaster.com/image.png",
+        "facebook_link": "www.facebook.com/milkmaster",
+    }
+
+    client = test_app.test_client()
+    resp = client.post(
+        "/artists/1/edit", data=artist_data, content_type="multipart/form-data"
+    )
+
+    assert resp.status_code == 302
+    assert resp.content_type == "text/html; charset=utf-8"
+
+    updated_artist = test_database.session.query(Artist).get(1)
+    updated_artist_dict = vars(updated_artist)
+
+    for key, value in artist_data.items():
+        assert value == updated_artist_dict[key]

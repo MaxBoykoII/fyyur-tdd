@@ -14,3 +14,15 @@ def add_artist(artist):
 
 def get_artist_by_id(artist_id):
     return db.session.query(Artist).get(artist_id)
+
+
+def update_artist(artist, form):
+    artist.name = form.get("name")
+    artist.city = form.get("city")
+    artist.state = form.get("state")
+    artist.phone = form.get("phone")
+    artist.genres = form.get("genres")
+    artist.image_link = form.get("image_link")
+    artist.facebook_link = form.get("facebook_link")
+
+    db.session.commit()
