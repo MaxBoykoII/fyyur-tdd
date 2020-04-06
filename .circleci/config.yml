@@ -28,6 +28,7 @@ jobs:
     - run: 
         name: Test production image
         command: |
+          export FLASK_ENV="development"
           docker-compose exec fyyur pytest "project/tests" -p no:warnings
           docker-compose exec fyyur flake8 project
           docker-compose exec fyyur black project --check
