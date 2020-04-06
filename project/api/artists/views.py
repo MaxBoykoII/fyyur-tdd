@@ -1,5 +1,6 @@
 from flask import Blueprint, flash, render_template, request
 from project.forms import ArtistForm
+from collections import namedtuple
 
 from project import db
 from project.api.artists.models import Artist
@@ -46,6 +47,29 @@ def show_artist(artist_id):
 def create_artist_form():
     form = ArtistForm()
     return render_template("forms/new_artist.html", form=form)
+
+@artists_blueprint.route('/artists/<int:artist_id>/edit', methods=['GET'])
+def edit_artist(artist_id):
+    artist = get_artist_by_id(artist_id)
+    data = {
+        "id": artist.id,
+        "name": artist.name,
+        "genres": artist.genres_list,
+        "city": artist.city,
+        "state": artist.state,
+        "phone": artist.phone,
+        "website": "https://www.gunsnpetalsband.com",
+        "facebook_link": artist.facebook_link,
+        "seeking_venue": True,
+        "seeking_description": "Looking for shows to perform at in the San Francisco Bay Area!",
+        "image_link": artist.image_link
+    }
+
+    form_data = namedtuple('ArtistFormModel', data.keys())(**data)
+
+    form = ArtistForm(obj=form_data)
+
+    return render_template('forms/edit_artist.html', form=form, artist=data)
 
 
 @artists_blueprint.route("/artists/create", methods=["POST"])

@@ -68,6 +68,9 @@ def test_get_artist(test_app, test_database, template_spy):
     assert view_model["past_shows_count"] == 0
     assert view_model["upcoming_shows_count"] == 0
 
+    db.session.delete(artist)
+    db.session.commit()
+
 
 def test_add_artist(test_app, test_database):
     artist_data = {
@@ -101,3 +104,56 @@ def test_add_artist(test_app, test_database):
     assert artist.genres == artist_data["genres"]
     assert artist.image_link == artist_data["image_link"]
     assert artist.facebook_link == artist_data["facebook_link"]
+
+    test_database.session.delete(artist)
+    test_database.session.commit()
+
+def test_edit_artist(test_app, test_database, template_spy):
+    assert len(template_spy) == 0
+
+    artist = Artist(
+        name="Brewmaster",
+        city="Columbus",
+        state="OH",
+        phone="614-399-3453",
+        genres="Bovine Rhapsody",
+        image_link="www.brewmaster.com/image.png",
+        facebook_link="www.facebook.com/brewie")
+
+    db = test_database
+
+    db.session.add(artist)
+    db.session.commit()
+
+    client = test_app.test_client()
+    resp = client.get("/artists/1/edit")
+
+    assert len(template_spy) == 1
+
+    template, context = template_spy[0]
+
+    assert resp.status_code == 200
+    assert resp.content_type == "text/html; charset=utf-8"
+
+    assert template.name == 'forms/edit_artist.html'
+    
+    form_model = context['artist']
+
+    assert form_model['id'] == artist.id
+    assert form_model['name'] == artist.name
+    assert form_model['genres'] == artist.genres_list
+    assert form_model['city'] == artist.city
+    assert form_model['state'] == artist.state
+    assert form_model['phone'] == artist.phone
+    assert form_model['website'] == "https://www.gunsnpetalsband.com"
+    assert form_model['facebook_link'] == artist.facebook_link
+    assert form_model['seeking_venue'] is True
+    assert form_model['seeking_description'] == "Looking for shows to perform at in the San Francisco Bay Area!"
+    assert form_model['image_link'] == artist.image_link
+
+    db.session.delete(artist)
+    db.session.commit()
+
+
+
+

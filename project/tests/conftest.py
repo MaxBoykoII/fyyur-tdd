@@ -12,7 +12,7 @@ def test_app():
         yield app
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture()
 def test_database():
     db.create_all()
     yield db

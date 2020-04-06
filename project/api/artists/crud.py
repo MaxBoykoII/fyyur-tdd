@@ -13,4 +13,4 @@ def add_artist(artist):
 
 
 def get_artist_by_id(artist_id):
-    return db.session.query(Artist).filter(Artist.id == artist_id).first()
+    return db.session.query(Artist).get(artist_id)
