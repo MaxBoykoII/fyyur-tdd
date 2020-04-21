@@ -35,7 +35,7 @@ def show_artist(artist_id):
         "city": artist.city,
         "state": artist.state,
         "phone": artist.phone,
-        "website": "https://www.gunsnpetalsband.com",
+        "website": artist.website,
         "facebook_link": artist.facebook_link,
         "seeking_venue": True,
         "seeking_description": "Looking for shows to perform at in the San Francisco Bay Area!",
@@ -65,7 +65,7 @@ def edit_artist(artist_id):
         "city": artist.city,
         "state": artist.state,
         "phone": artist.phone,
-        "website": "https://www.gunsnpetalsband.com",
+        "website": artist.website,
         "facebook_link": artist.facebook_link,
         "seeking_venue": True,
         "seeking_description": "Looking for shows to perform at in the San Francisco Bay Area!",
@@ -117,6 +117,7 @@ def create_artist_submission():
             genres=request.form.get("genres"),
             image_link=request.form.get("image_link"),
             facebook_link=request.form.get("facebook_link"),
+            website=request.form.get("website"),
         )
 
         add_artist(artist)

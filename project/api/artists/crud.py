@@ -25,6 +25,7 @@ def update_artist(artist, form):
     artist.genres = form.get("genres")
     artist.image_link = form.get("image_link")
     artist.facebook_link = form.get("facebook_link")
+    artist.website = form.get("website")
 
     db.session.commit()
 

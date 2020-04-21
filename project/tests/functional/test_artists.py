@@ -40,7 +40,7 @@ def test_get_artist(test_app, test_database, template_spy, artist):
     assert view_model["city"] == artist.city
     assert view_model["state"] == artist.state
     assert view_model["phone"] == artist.phone
-    assert view_model["website"] == "https://www.gunsnpetalsband.com"
+    assert view_model["website"] == artist.website
     assert view_model["genres"] == artist.genres_list
     assert view_model["facebook_link"] == artist.facebook_link
     assert view_model["seeking_venue"] is True
@@ -64,6 +64,7 @@ def test_add_artist(test_app, test_database):
         "genres": "Bovine Rhapsody",
         "image_link": "www.brewmaster.com/image.png",
         "facebook_link": "www.facebook.com/brewie",
+        "website": "www.brewmaster.com",
     }
 
     client = test_app.test_client()
@@ -87,6 +88,7 @@ def test_add_artist(test_app, test_database):
     assert artist.genres == artist_data["genres"]
     assert artist.image_link == artist_data["image_link"]
     assert artist.facebook_link == artist_data["facebook_link"]
+    assert artist.website == artist_data["website"]
 
     test_database.session.delete(artist)
     test_database.session.commit()
@@ -115,7 +117,7 @@ def test_edit_artist_get(test_app, test_database, template_spy, artist):
     assert form_model["city"] == artist.city
     assert form_model["state"] == artist.state
     assert form_model["phone"] == artist.phone
-    assert form_model["website"] == "https://www.gunsnpetalsband.com"
+    assert form_model["website"] == artist.website
     assert form_model["facebook_link"] == artist.facebook_link
     assert form_model["seeking_venue"] is True
     assert (
@@ -134,6 +136,7 @@ def test_edit_artist_post(test_app, test_database, artist):
         "genres": "Alternative",
         "image_link": "www.milkmaster.com/image.png",
         "facebook_link": "www.facebook.com/milkmaster",
+        "website": "www.milkmaster.com",
     }
 
     client = test_app.test_client()

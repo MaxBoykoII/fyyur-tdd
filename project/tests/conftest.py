@@ -68,6 +68,7 @@ def artists(test_database):
         genres="Bovine Rhapsody",
         image_link="www.brewmaster.com/image.png",
         facebook_link="www.facebook.com/brewie",
+        website="www.brewmaster.com",
     )
 
     artist2 = Artist(
@@ -78,6 +79,7 @@ def artists(test_database):
         genres="Bovine Rhapsody",
         image_link="www.brewmaster.com/image.png",
         facebook_link="www.facebook.com/brewie",
+        website="wwww.mattq.com",
     )
 
     artist3 = Artist(
@@ -88,6 +90,7 @@ def artists(test_database):
         genres="Bovine Rhapsody",
         image_link="www.brewmaster.com/image.png",
         facebook_link="www.facebook.com/brewie",
+        website="www.wsaxb.com",
     )
 
     db = test_database
