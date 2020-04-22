@@ -26,6 +26,8 @@ def update_artist(artist, form):
     artist.image_link = form.get("image_link")
     artist.facebook_link = form.get("facebook_link")
     artist.website = form.get("website")
+    artist.seeking_venue = True if form.get("seeking_venue") == "y" else False
+    artist.seeking_description = form.get("seeking_description")
 
     db.session.commit()
 

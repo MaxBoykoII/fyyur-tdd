@@ -45,6 +45,8 @@ def artist(test_database):
         genres="Bovine Rhapsody",
         image_link="www.brewmaster.com/image.png",
         facebook_link="www.facebook.com/brewie",
+        seeking_venue=True,
+        seeking_description="Looking to rock the barn!",
     )
 
     db = test_database
@@ -69,6 +71,8 @@ def artists(test_database):
         image_link="www.brewmaster.com/image.png",
         facebook_link="www.facebook.com/brewie",
         website="www.brewmaster.com",
+        seeking_venue=True,
+        seeking_description="Seeking a venue without any bovine rhapsodists!",
     )
 
     artist2 = Artist(
@@ -80,6 +84,8 @@ def artists(test_database):
         image_link="www.brewmaster.com/image.png",
         facebook_link="www.facebook.com/brewie",
         website="wwww.mattq.com",
+        seeking_venue=False,
+        seeking_description="No longer seeking a venue!",
     )
 
     artist3 = Artist(
@@ -91,6 +97,8 @@ def artists(test_database):
         image_link="www.brewmaster.com/image.png",
         facebook_link="www.facebook.com/brewie",
         website="www.wsaxb.com",
+        seeking_venue=True,
+        seeking_description="Seeking a venue on the West Coast!",
     )
 
     db = test_database

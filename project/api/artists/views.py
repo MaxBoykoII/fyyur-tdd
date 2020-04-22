@@ -37,8 +37,8 @@ def show_artist(artist_id):
         "phone": artist.phone,
         "website": artist.website,
         "facebook_link": artist.facebook_link,
-        "seeking_venue": True,
-        "seeking_description": "Looking for shows to perform at in the San Francisco Bay Area!",
+        "seeking_venue": artist.seeking_venue,
+        "seeking_description": artist.seeking_description,
         "image_link": artist.image_link,
         "past_shows": past_shows,
         "upcoming_shows": upcoming_shows,
@@ -67,8 +67,8 @@ def edit_artist(artist_id):
         "phone": artist.phone,
         "website": artist.website,
         "facebook_link": artist.facebook_link,
-        "seeking_venue": True,
-        "seeking_description": "Looking for shows to perform at in the San Francisco Bay Area!",
+        "seeking_venue": artist.seeking_venue,
+        "seeking_description": artist.seeking_description,
         "image_link": artist.image_link,
     }
 
@@ -118,6 +118,8 @@ def create_artist_submission():
             image_link=request.form.get("image_link"),
             facebook_link=request.form.get("facebook_link"),
             website=request.form.get("website"),
+            seeking_venue=True if request.form.get("seeking_venue") == "y" else False,
+            seeking_description=request.form.get("seeking_description"),
         )
 
         add_artist(artist)

@@ -18,6 +18,8 @@ class Artist(db.Model):
     image_link = db.Column(db.String)
     facebook_link = db.Column(db.String)
     website = db.Column(db.String)
+    seeking_venue = db.Column(db.Boolean)
+    seeking_description = db.Column(db.String(750))
 
     @property
     def genres_list(self):
