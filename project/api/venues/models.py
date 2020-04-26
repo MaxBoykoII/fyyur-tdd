@@ -23,7 +23,7 @@ class Venue(db.Model):
 
     @property
     def genres_list(self):
-        genres = self.genres.split(",") if self.genres != None else []
+        genres = self.genres.split(",") if self.genres is not None else []
 
         return genres
 

@@ -1,6 +1,3 @@
-import pytest
-
-
 def test_get_venue(test_app, test_database, template_spy, venue):
     assert len(template_spy) == 0
 
