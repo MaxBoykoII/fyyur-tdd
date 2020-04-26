@@ -54,7 +54,7 @@ def test_get_venues(test_app, test_database, template_spy, venues):
             "city": "San Francisco",
             "state": "CA",
             "venues": [
-                {"id": 1, "name": "The Musical Hop", "num_upcoming_shows": 0,},
+                {"id": 1, "name": "The Musical Hop", "num_upcoming_shows": 0},
                 {
                     "id": 3,
                     "name": "Park Square Live Music & Coffee",
@@ -66,7 +66,7 @@ def test_get_venues(test_app, test_database, template_spy, venues):
             "city": "New York",
             "state": "NY",
             "venues": [
-                {"id": 2, "name": "The Dueling Pianos Bar", "num_upcoming_shows": 0,}
+                {"id": 2, "name": "The Dueling Pianos Bar", "num_upcoming_shows": 0}
             ],
         },
     ]
