@@ -30,3 +30,45 @@ def test_get_venue(test_app, test_database, template_spy, venue):
     assert view_model["upcoming_shows"] == []
     assert view_model["past_shows_count"] == 0
     assert view_model["upcoming_shows_count"] == 0
+
+
+def test_get_venues(test_app, test_database, template_spy, venues):
+    assert len(template_spy) == 0
+
+    client = test_app.test_client()
+    resp = client.get("/venues")
+
+    assert len(template_spy) == 1
+
+    template, context = template_spy[0]
+
+    assert resp.status_code == 200
+    assert resp.content_type == "text/html; charset=utf-8"
+
+    assert template.name == "pages/venues.html"
+
+    view_model = context["areas"]
+
+    expected_view_model = [
+        {
+            "city": "San Francisco",
+            "state": "CA",
+            "venues": [
+                {"id": 1, "name": "The Musical Hop", "num_upcoming_shows": 0,},
+                {
+                    "id": 3,
+                    "name": "Park Square Live Music & Coffee",
+                    "num_upcoming_shows": 0,
+                },
+            ],
+        },
+        {
+            "city": "New York",
+            "state": "NY",
+            "venues": [
+                {"id": 2, "name": "The Dueling Pianos Bar", "num_upcoming_shows": 0,}
+            ],
+        },
+    ]
+
+    assert view_model == expected_view_model

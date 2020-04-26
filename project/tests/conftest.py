@@ -137,3 +137,58 @@ def venue(test_database):
     yield venue
 
     db.session.delete(venue)
+    db.session.commit()
+
+
+@pytest.fixture
+def venues(test_database):
+    venue1 = Venue(
+        name="The Musical Hop",
+        city="San Francisco",
+        state="CA",
+        address="1221 Main ST",
+        genres="Rock",
+        website="www.themusicalhop.com",
+        image_link=None,
+        facebook_link=None,
+        seeking_talent=False,
+        seeking_description=None,
+    )
+
+    venue2 = Venue(
+        name="The Dueling Pianos Bar",
+        city="New York",
+        state="NY",
+        address="6684 South ST",
+        genres="Rock",
+        website="www.duelingpianosbar.com",
+        image_link=None,
+        facebook_link=None,
+        seeking_talent=False,
+        seeking_description=None,
+    )
+
+    venue3 = Venue(
+        name="Park Square Live Music & Coffee",
+        city="San Francisco",
+        state="CA",
+        address="6684 South ST",
+        genres="Rock",
+        website="www.parksquaremusic.com",
+        image_link=None,
+        facebook_link=None,
+        seeking_talent=False,
+        seeking_description=None,
+    )
+
+    db = test_database
+
+    db.session.add(venue1)
+    db.session.add(venue2)
+    db.session.add(venue3)
+    db.session.commit()
+
+    yield [venue1, venue2, venue3]
+
+    db.session.delete(venue1)
+    db.session.commit()

@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template
-from project.api.venues.crud import get_venue_by_id
+from project.api.venues.crud import get_venue_by_id, aggregate_venues
 
 venues_blueprint = Blueprint("venues", __name__, template_folder="../templates")
 
@@ -31,3 +31,9 @@ def show_venue(venue_id):
     }
 
     return render_template("pages/show_venue.html", venue=data)
+
+
+@venues_blueprint.route("/venues")
+def venues():
+    data = aggregate_venues()
+    return render_template("pages/venues.html", areas=data)
