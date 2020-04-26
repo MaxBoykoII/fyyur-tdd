@@ -44,11 +44,13 @@ def create_app(script_info=None):
     # register blueprints
     from project.api.home import home_blueprint
     from project.api.artists.views import artists_blueprint
+    from project.api.venues.views import venues_blueprint
     from project.api.ping import ping_blueprint
 
     app.register_blueprint(home_blueprint)
     app.register_blueprint(ping_blueprint)
     app.register_blueprint(artists_blueprint)
+    app.register_blueprint(venues_blueprint)
 
     # shell context for flask cli
     @app.shell_context_processor

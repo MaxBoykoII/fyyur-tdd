@@ -3,6 +3,7 @@ from flask import template_rendered
 
 from project import create_app, db
 from project.api.artists.models import Artist
+from project.api.venues.models import Venue
 
 
 @pytest.fixture(scope="module")
@@ -114,3 +115,25 @@ def artists(test_database):
     db.session.delete(artist2)
     db.session.delete(artist2)
     db.session.commit()
+
+
+@pytest.fixture
+def venue(test_database):
+    venue = Venue(
+        name="The Old Barn",
+        city="Plain City",
+        state="OH",
+        address="5147 Barn Blvd",
+        genres="Bovine Rhapsody",
+        website="www.oldbarnoh.com",
+        image_link=None,
+        facebook_link=None,
+        seeking_talent=True,
+        seeking_description="Looking for some Bovine Rhapsodists!",
+    )
+    db.session.add(venue)
+    db.session.commit()
+
+    yield venue
+
+    db.session.delete(venue)
