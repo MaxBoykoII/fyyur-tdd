@@ -30,3 +30,22 @@ def aggregate_venues():
     data = [{"city": g[0], "state": g[1], "venues": g[2]} for g in groups]
 
     return data
+
+
+def add_venue(form):
+    venue = Venue(
+        name=form.get("name"),
+        city=form.get("city"),
+        state=form.get("state"),
+        address=form.get("address"),
+        phone=form.get("phone"),
+        genres=form.get("genres"),
+        facebook_link=form.get("facebook_link"),
+        image_link=form.get("image_link"),
+        website=form.get("website"),
+        seeking_description=form.get("seeking_description"),
+        seeking_talent=True if form.get("seeking_talent") == "y" else False,
+    )
+
+    db.session.add(venue)
+    db.session.commit()
