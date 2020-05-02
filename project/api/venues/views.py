@@ -67,3 +67,13 @@ def create_venue_submission():
         db.session.close()
 
     return render_template("pages/home.html"), status_code
+
+
+@venues_blueprint.route("/venues/<int:venue_id>/edit", methods=["GET"])
+def edit_venue(venue_id):
+    venue = get_venue_by_id(venue_id)
+    view_model = venue.as_dict()
+    form_data = venue.get_form_data()
+    form = VenueForm(obj=form_data)
+
+    return render_template("forms/edit_venue.html", form=form, venue=view_model)

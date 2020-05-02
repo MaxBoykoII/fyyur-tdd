@@ -192,3 +192,38 @@ def venues(test_database):
 
     db.session.delete(venue1)
     db.session.commit()
+
+
+@pytest.fixture()
+def venue_data():
+    venue_data = {
+        "id": 1,
+        "name": "The Musical Hop",
+        "genres": ["Jazz", "Reggae", "Swing", "Classical", "Folk"],
+        "address": "1015 Folsom Street",
+        "city": "San Francisco",
+        "state": "CA",
+        "phone": "123-123-1234",
+        "website": "https://www.themusicalhop.com",
+        "facebook_link": "https://www.facebook.com/TheMusicalHop",
+        "seeking_talent": True,
+        "seeking_description": "We are on the lookout for a local artist to play every two weeks. Please call us.",
+        "image_link": "https://images.unsplash.com/photo-1.com",
+    }
+
+    venue = Venue(
+        id=venue_data["id"],
+        name=venue_data["name"],
+        genres=",".join(venue_data["genres"]),
+        address=venue_data["address"],
+        city=venue_data["city"],
+        state=venue_data["state"],
+        phone=venue_data["phone"],
+        website=venue_data["website"],
+        facebook_link=venue_data["facebook_link"],
+        seeking_talent=venue_data["seeking_talent"],
+        seeking_description=venue_data["seeking_description"],
+        image_link=venue_data["image_link"],
+    )
+
+    return venue, venue_data

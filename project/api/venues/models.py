@@ -1,8 +1,7 @@
 import os
-
 from flask_admin.contrib.sqla import ModelView
-
 from project import db
+from collections import namedtuple
 
 
 class Venue(db.Model):
@@ -38,6 +37,20 @@ class Venue(db.Model):
         show_data = []
 
         return show_data
+
+    def as_dict(self):
+        data_dict = dict(vars(self))
+        data_dict.pop("_sa_instance_state", None)
+        data_dict["genres"] = self.genres_list
+
+        return data_dict
+
+    def get_form_data(self):
+        data = self.as_dict()
+        data.pop("id", None)
+        form_data = namedtuple("VenueFormModel", data.keys())(**data)
+
+        return form_data
 
 
 if os.getenv("FLASK_ENV") == "development":

@@ -127,3 +127,31 @@ def test_create_venue(test_app, test_database):
         expected_value = value if key != "seeking_talent" else True
         actual_value = venue_dict[key]
         assert actual_value == expected_value
+
+
+def test_get_edit_venue(test_app, venue, template_spy):
+    assert len(template_spy) == 0
+
+    client = test_app.test_client()
+
+    resp = client.get(f"/venues/{venue.id}/edit")
+
+    assert len(template_spy) == 1
+
+    template, context = template_spy[0]
+
+    assert resp.status_code == 200
+    assert resp.content_type == "text/html; charset=utf-8"
+    assert template.name == "forms/edit_venue.html"
+    assert type(context["form"]) == VenueForm
+
+    form = context["form"]
+    venue_data = context["venue"]
+
+    expected_form_data = venue.get_form_data()._asdict()
+    actual_form_data = form.data
+
+    assert venue_data == venue.as_dict()
+
+    for key, val in expected_form_data.items():
+        actual_form_data[key] == val
