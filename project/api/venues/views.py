@@ -1,6 +1,11 @@
-from flask import Blueprint, render_template, flash, request
+from flask import Blueprint, render_template, flash, request, redirect, url_for
 from project.forms import VenueForm
-from project.api.venues.crud import get_venue_by_id, aggregate_venues, add_venue
+from project.api.venues.crud import (
+    get_venue_by_id,
+    aggregate_venues,
+    add_venue,
+    update_venue,
+)
 from project import db
 
 venues_blueprint = Blueprint("venues", __name__, template_folder="../templates")
@@ -77,3 +82,21 @@ def edit_venue(venue_id):
     form = VenueForm(obj=form_data)
 
     return render_template("forms/edit_venue.html", form=form, venue=view_model)
+
+
+@venues_blueprint.route("/venues/<int:venue_id>/edit", methods=["POST"])
+def edit_venue_submission(venue_id):
+    try:
+        venue = get_venue_by_id(venue_id)
+        update_venue(venue, request.form)
+        flash("Venue " + request.form["name"] + " was successfully updated!")
+
+    except Exception as err:
+        print(err)
+        db.session.rollback()
+        flash("Venue " + request.form["name"] + " could not be updated!")
+
+    finally:
+        db.session.close()
+
+    return redirect(url_for("venues.show_venue", venue_id=venue_id))

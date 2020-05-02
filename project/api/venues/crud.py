@@ -49,3 +49,19 @@ def add_venue(form):
 
     db.session.add(venue)
     db.session.commit()
+
+
+def update_venue(venue, form):
+    venue.name = form.get("name")
+    venue.city = form.get("city")
+    venue.state = form.get("state")
+    venue.address = form.get("address")
+    venue.phone = form.get("phone")
+    venue.genres = form.get("genres")
+    venue.facebook_link = form.get("facebook_link")
+    venue.image_link = form.get("image_link")
+    venue.website = form.get("website")
+    venue.seeking_description = form.get("seeking_description")
+    venue.seeking_talent = True if form.get("seeking_talent") == "y" else False
+
+    db.session.commit()

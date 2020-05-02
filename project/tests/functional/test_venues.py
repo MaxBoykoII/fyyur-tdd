@@ -155,3 +155,36 @@ def test_get_edit_venue(test_app, venue, template_spy):
 
     for key, val in expected_form_data.items():
         actual_form_data[key] == val
+
+
+def test_edit_venue_submission(test_app, test_database, venue):
+    venue_id = venue.id
+    update = {
+        "name": "NAME",
+        "genres": "Jazz, Reggae",
+        "address": "ADDRESS",
+        "city": "CITY",
+        "state": "STATE",
+        "phone": "PHONE",
+        "website": "WEBSITE",
+        "facebook_link": "FACEBOOK_LINK",
+        "seeking_talent": "n",
+        "seeking_description": "",
+        "image_link": "IMAGE_LINK",
+    }
+
+    client = test_app.test_client()
+    resp = client.post(
+        f"/venues/{venue_id}/edit", data=update, content_type="multipart/form-data"
+    )
+
+    assert resp.status_code == 302
+    assert resp.content_type == "text/html; charset=utf-8"
+
+    updated_venue = test_database.session.query(Venue).get(venue_id)
+    updated_venue_dict = vars(updated_venue)
+
+    for key, value in update.items():
+        expected_value = value if key != "seeking_talent" else False
+        actual_value = updated_venue_dict[key]
+        assert actual_value == expected_value
