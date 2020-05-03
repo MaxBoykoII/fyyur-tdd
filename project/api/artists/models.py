@@ -5,7 +5,6 @@ from flask_admin.contrib.sqla import ModelView
 from project import db
 
 
-# Artist Model
 class Artist(db.Model):
     __tablename__ = "Artist"
 
@@ -15,8 +14,11 @@ class Artist(db.Model):
     state = db.Column(db.String(120))
     phone = db.Column(db.String(120))
     genres = db.Column(db.String(120))
-    image_link = db.Column(db.String(500))
-    facebook_link = db.Column(db.String(500))
+    image_link = db.Column(db.String)
+    facebook_link = db.Column(db.String)
+    website = db.Column(db.String)
+    seeking_venue = db.Column(db.Boolean)
+    seeking_description = db.Column(db.String(750))
 
     @property
     def genres_list(self):

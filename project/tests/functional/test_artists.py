@@ -40,14 +40,11 @@ def test_get_artist(test_app, test_database, template_spy, artist):
     assert view_model["city"] == artist.city
     assert view_model["state"] == artist.state
     assert view_model["phone"] == artist.phone
-    assert view_model["website"] == "https://www.gunsnpetalsband.com"
+    assert view_model["website"] == artist.website
     assert view_model["genres"] == artist.genres_list
     assert view_model["facebook_link"] == artist.facebook_link
-    assert view_model["seeking_venue"] is True
-    assert (
-        view_model["seeking_description"]
-        == "Looking for shows to perform at in the San Francisco Bay Area!"
-    )
+    assert view_model["seeking_venue"] == artist.seeking_venue
+    assert view_model["seeking_description"] == artist.seeking_description
     assert view_model["image_link"] == artist.image_link
     assert view_model["past_shows"] == []
     assert view_model["upcoming_shows"] == []
@@ -64,6 +61,9 @@ def test_add_artist(test_app, test_database):
         "genres": "Bovine Rhapsody",
         "image_link": "www.brewmaster.com/image.png",
         "facebook_link": "www.facebook.com/brewie",
+        "website": "www.brewmaster.com",
+        "seeking_venue": "y",
+        "seeking_description": "Looking for a venue that features Bovine Rhapsody!",
     }
 
     client = test_app.test_client()
@@ -87,6 +87,11 @@ def test_add_artist(test_app, test_database):
     assert artist.genres == artist_data["genres"]
     assert artist.image_link == artist_data["image_link"]
     assert artist.facebook_link == artist_data["facebook_link"]
+    assert artist.website == artist_data["website"]
+    assert (
+        artist.seeking_venue is True if artist_data["seeking_venue"] == "y" else False
+    )
+    assert artist.seeking_description == artist_data["seeking_description"]
 
     test_database.session.delete(artist)
     test_database.session.commit()
@@ -115,13 +120,10 @@ def test_edit_artist_get(test_app, test_database, template_spy, artist):
     assert form_model["city"] == artist.city
     assert form_model["state"] == artist.state
     assert form_model["phone"] == artist.phone
-    assert form_model["website"] == "https://www.gunsnpetalsband.com"
+    assert form_model["website"] == artist.website
     assert form_model["facebook_link"] == artist.facebook_link
-    assert form_model["seeking_venue"] is True
-    assert (
-        form_model["seeking_description"]
-        == "Looking for shows to perform at in the San Francisco Bay Area!"
-    )
+    assert form_model["seeking_venue"] == artist.seeking_venue
+    assert form_model["seeking_description"] == artist.seeking_description
     assert form_model["image_link"] == artist.image_link
 
 
@@ -134,6 +136,9 @@ def test_edit_artist_post(test_app, test_database, artist):
         "genres": "Alternative",
         "image_link": "www.milkmaster.com/image.png",
         "facebook_link": "www.facebook.com/milkmaster",
+        "website": "www.milkmaster.com",
+        "seeking_venue": "n",
+        "seeking_description": "No longer seeking a venue",
     }
 
     client = test_app.test_client()
@@ -148,7 +153,9 @@ def test_edit_artist_post(test_app, test_database, artist):
     updated_artist_dict = vars(updated_artist)
 
     for key, value in artist_data.items():
-        assert value == updated_artist_dict[key]
+        expected_value = value if key != "seeking_venue" else False
+        actual_value = updated_artist_dict[key]
+        assert actual_value == expected_value
 
 
 @pytest.mark.parametrize(
