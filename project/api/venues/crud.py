@@ -1,6 +1,7 @@
 from project import db
 from project.api.venues.models import Venue
 from itertools import groupby
+from sqlalchemy import func
 
 
 def get_venue_by_id(venue_id):
@@ -65,3 +66,14 @@ def update_venue(venue, form):
     venue.seeking_talent = True if form.get("seeking_talent") == "y" else False
 
     db.session.commit()
+
+
+def search_venues_by_name(search_term):
+    if search_term is None or search_term == "":
+        return []
+
+    return (
+        db.session.query(Venue)
+        .filter(func.upper(Venue.name).contains(search_term.upper(), autoescape=True))
+        .all()
+    )

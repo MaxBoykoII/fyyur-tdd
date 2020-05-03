@@ -155,6 +155,7 @@ def search_artists():
             for artist in artists
         ],
     }
+
     return render_template(
         "pages/search_artists.html",
         results=response,

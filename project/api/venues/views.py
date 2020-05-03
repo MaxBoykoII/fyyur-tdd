@@ -5,6 +5,7 @@ from project.api.venues.crud import (
     aggregate_venues,
     add_venue,
     update_venue,
+    search_venues_by_name,
 )
 from project import db
 
@@ -100,3 +101,22 @@ def edit_venue_submission(venue_id):
         db.session.close()
 
     return redirect(url_for("venues.show_venue", venue_id=venue_id))
+
+
+@venues_blueprint.route("/venues/search", methods=["POST"])
+def search_venues():
+    search_term = request.form.get("search_term", "")
+
+    venues = search_venues_by_name(search_term)
+    response = {
+        "count": len(venues),
+        "data": [
+            {"id": venue.id, "name": venue.name, "num_upcoming_shows": 0}
+            for venue in venues
+        ],
+    }
+    return render_template(
+        "pages/search_venues.html",
+        results=response,
+        search_term=request.form.get("search_term", ""),
+    )

@@ -1,5 +1,6 @@
 from project.forms import VenueForm
 from project.api.venues.models import Venue
+import pytest
 
 
 def test_get_venue(test_app, test_database, template_spy, venue):
@@ -188,3 +189,78 @@ def test_edit_venue_submission(test_app, test_database, venue):
         expected_value = value if key != "seeking_talent" else False
         actual_value = updated_venue_dict[key]
         assert actual_value == expected_value
+
+
+@pytest.mark.parametrize(
+    "search_term, results",
+    [
+        [
+            "Hop",
+            {
+                "count": 1,
+                "data": [{"id": 1, "name": "The Musical Hop", "num_upcoming_shows": 0}],
+            },
+        ],
+        [
+            "hoP",
+            {
+                "count": 1,
+                "data": [{"id": 1, "name": "The Musical Hop", "num_upcoming_shows": 0}],
+            },
+        ],
+        [
+            "Music",
+            {
+                "count": 2,
+                "data": [
+                    {"id": 1, "name": "The Musical Hop", "num_upcoming_shows": 0},
+                    {
+                        "id": 3,
+                        "name": "Park Square Live Music & Coffee",
+                        "num_upcoming_shows": 0,
+                    },
+                ],
+            },
+        ],
+        [
+            "MUSIC",
+            {
+                "count": 2,
+                "data": [
+                    {"id": 1, "name": "The Musical Hop", "num_upcoming_shows": 0},
+                    {
+                        "id": 3,
+                        "name": "Park Square Live Music & Coffee",
+                        "num_upcoming_shows": 0,
+                    },
+                ],
+            },
+        ],
+    ],
+)
+def test_search_venues(
+    test_app, test_database, template_spy, venues, search_term, results
+):
+    assert len(template_spy) == 0
+
+    client = test_app.test_client()
+    resp = client.post(
+        "/venues/search",
+        data={"search_term": search_term},
+        content_type="multipart/form-data",
+    )
+
+    assert resp.status_code == 200
+    assert resp.content_type == "text/html; charset=utf-8"
+
+    assert len(template_spy) == 1
+
+    template, context = template_spy[0]
+
+    assert template.name == "pages/search_venues.html"
+
+    actual_results = context["results"]
+    actual_search_term = context["search_term"]
+
+    assert actual_results == results
+    assert actual_search_term == search_term
