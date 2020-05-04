@@ -1,8 +1,11 @@
+import datetime
+
 import pytest
 from flask import template_rendered
 
 from project import create_app, db
 from project.api.artists.models import Artist
+from project.api.shows.models import Show
 from project.api.venues.models import Venue
 
 
@@ -227,3 +230,20 @@ def venue_data():
     )
 
     return venue, venue_data
+
+
+@pytest.fixture()
+def show(test_database, artist, venue):
+    db = test_database
+    show = Show(
+        artist_id=artist.id,
+        venue_id=venue.id,
+        start_time=datetime.datetime(2018, 6, 1, 15, 0, 0),
+    )
+    db.session.add(show)
+    db.session.commit()
+
+    yield show
+
+    db.session.delete(show)
+    db.session.commit()
