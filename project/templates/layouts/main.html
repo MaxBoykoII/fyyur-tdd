@@ -78,6 +78,8 @@
                 href="{{ url_for('venues.venues') }}">Venues</a></li>
             <li {% if request.endpoint == 'artists.artists' %} class="active" {% endif %}><a
                 href="{{ url_for('artists.artists') }}">Artists</a></li>
+            <li {% if request.endpoint == 'shows' %} class="active" {% endif %}><a
+                href="{{ url_for('shows.shows') }}">Shows</a></li>
           </ul>
         </div>
         <!--/.nav-collapse -->

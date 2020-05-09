@@ -1,7 +1,4 @@
-import os
-
-from flask_admin.contrib.sqla import ModelView
-
+from datetime import datetime
 from project import db
 
 
@@ -19,14 +16,25 @@ class Artist(db.Model):
     website = db.Column(db.String)
     seeking_venue = db.Column(db.Boolean)
     seeking_description = db.Column(db.String(750))
+    shows = db.relationship("Show", back_populates="artist")
 
     @property
     def genres_list(self):
         genres = self.genres.split(",") if self.genres is not None else []
         return genres
 
+    @property
+    def past_shows(self):
+        shows = [
+            show.venue_data for show in self.shows if show.start_time < datetime.now()
+        ]
 
-if os.getenv("FLASK_ENV") == "development":
-    from project import admin
+        return shows
 
-    admin.add_view(ModelView(Artist, db.session))
+    @property
+    def upcoming_shows(self):
+        shows = [
+            show.venue_data for show in self.shows if show.start_time >= datetime.now()
+        ]
+
+        return shows

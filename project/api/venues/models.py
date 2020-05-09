@@ -1,6 +1,5 @@
-import os
-from flask_admin.contrib.sqla import ModelView
 from project import db
+from datetime import datetime
 from collections import namedtuple
 
 
@@ -19,6 +18,7 @@ class Venue(db.Model):
     facebook_link = db.Column(db.String)
     seeking_talent = db.Column(db.Boolean, nullable=False, default=False)
     seeking_description = db.Column(db.String(750))
+    shows = db.relationship("Show", back_populates="venue")
 
     @property
     def genres_list(self):
@@ -28,13 +28,17 @@ class Venue(db.Model):
 
     @property
     def past_shows(self):
-        show_data = []
+        show_data = [
+            show.artist_data for show in self.shows if show.start_time < datetime.now()
+        ]
 
         return show_data
 
     @property
     def upcoming_shows(self):
-        show_data = []
+        show_data = [
+            show.artist_data for show in self.shows if show.start_time >= datetime.now()
+        ]
 
         return show_data
 
@@ -51,9 +55,3 @@ class Venue(db.Model):
         form_data = namedtuple("VenueFormModel", data.keys())(**data)
 
         return form_data
-
-
-if os.getenv("FLASK_ENV") == "development":
-    from project import admin
-
-    admin.add_view(ModelView(Venue, db.session))

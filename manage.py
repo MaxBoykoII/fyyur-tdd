@@ -1,8 +1,10 @@
 from flask.cli import FlaskGroup
-
+import datetime
 from project import create_app, db
+from project.api.shows.models import Show
 from project.api.artists.models import Artist
 from project.api.venues.models import Venue
+
 
 app = create_app()
 cli = FlaskGroup(create_app=create_app)
@@ -55,6 +57,10 @@ def seed_db():
             seeking_description="Looking for some Bovine Rhapsodists!",
         )
     )
+
+    db.session.commit()
+
+    db.session.add(Show(artist_id=1, venue_id=1, start_time=datetime.datetime.now()))
 
     db.session.commit()
 

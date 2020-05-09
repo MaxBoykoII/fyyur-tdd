@@ -111,7 +111,11 @@ def search_venues():
     response = {
         "count": len(venues),
         "data": [
-            {"id": venue.id, "name": venue.name, "num_upcoming_shows": 0}
+            {
+                "id": venue.id,
+                "name": venue.name,
+                "num_upcoming_shows": len(venue.upcoming_shows),
+            }
             for venue in venues
         ],
     }
