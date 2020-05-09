@@ -1,6 +1,7 @@
 from project.forms import ShowForm
 from project.api.shows.models import Show
 import dateutil.parser
+import datetime
 
 
 def test_get_shows(test_app, show, venue, artist, template_spy):
@@ -86,3 +87,32 @@ def test_create_show_submission(test_app, template_spy, test_database, artist, v
 
     db.session.delete(show)
     db.session.commit()
+
+
+def test_performances(test_database, artist, venue):
+    past_show = Show(
+        artist_id=artist.id,
+        venue_id=venue.id,
+        start_time=datetime.datetime.now() - datetime.timedelta(days=1, hours=3),
+    )
+    upcoming_show = Show(
+        artist_id=artist.id,
+        venue_id=venue.id,
+        start_time=datetime.datetime.now() + datetime.timedelta(days=1, hours=3),
+    )
+
+    test_database.session.add(past_show)
+    test_database.session.add(upcoming_show)
+    test_database.session.commit()
+
+    assert artist.shows == [past_show, upcoming_show]
+    assert venue.shows == [past_show, upcoming_show]
+
+    assert artist.past_shows == [past_show.venue_data]
+    assert artist.upcoming_shows == [upcoming_show.venue_data]
+    assert venue.past_shows == [past_show.artist_data]
+    assert venue.upcoming_shows == [upcoming_show.artist_data]
+
+    test_database.session.delete(past_show)
+    test_database.session.delete(upcoming_show)
+    test_database.session.commit()

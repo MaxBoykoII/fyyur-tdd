@@ -25,8 +25,8 @@ def artists():
 def show_artist(artist_id):
     artist = get_artist_by_id(artist_id)
 
-    past_shows = []
-    upcoming_shows = []
+    past_shows = artist.past_shows
+    upcoming_shows = artist.upcoming_shows
 
     data = {
         "id": artist.id,
@@ -151,7 +151,11 @@ def search_artists():
     response = {
         "count": len(artists),
         "data": [
-            {"id": artist.id, "name": artist.name, "num_upcoming_shows": 0}
+            {
+                "id": artist.id,
+                "name": artist.name,
+                "num_upcoming_shows": len(artist.upcoming_shows),
+            }
             for artist in artists
         ],
     }
