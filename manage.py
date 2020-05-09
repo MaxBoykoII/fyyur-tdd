@@ -6,7 +6,7 @@ from project.api.artists.models import Artist
 from project.api.venues.models import Venue
 
 
-# app = create_app()
+app = create_app()
 cli = FlaskGroup(create_app=create_app)
 
 
