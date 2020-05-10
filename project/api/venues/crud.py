@@ -82,3 +82,8 @@ def search_venues_by_name(search_term):
         .filter(func.upper(Venue.name).contains(search_term.upper(), autoescape=True))
         .all()
     )
+
+
+def delete_venue_by_id(venue_id):
+    db.session.query(Venue).filter(Venue.id == venue_id).delete()
+    db.session.commit()

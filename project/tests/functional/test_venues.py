@@ -267,3 +267,30 @@ def test_search_venues(
 
     assert actual_results == results
     assert actual_search_term == search_term
+
+
+def test_delete_venue(test_app, test_database, template_spy):
+    assert len(template_spy) == 0
+
+    test_database.session.query(Venue).delete()
+    test_database.session.commit()
+
+    venue = Venue(name="NAME", city="CITY", state="AZ", address="ADDRESS")
+
+    test_database.session.add(venue)
+    test_database.session.commit()
+
+    venue_id = venue.id
+
+    client = test_app.test_client()
+    resp = client.delete(f"/venues/{venue_id}")
+
+    assert resp.status_code == 200
+    assert resp.content_type == "text/html; charset=utf-8"
+    assert len(template_spy) == 1
+
+    template, context = template_spy[0]
+
+    assert template.name == "pages/home.html"
+
+    assert test_database.session.query(Venue).filter(Venue.id == venue_id).all() == []
