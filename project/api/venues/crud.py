@@ -6,10 +6,18 @@ from sqlalchemy import func
 
 
 def get_venue_by_id(venue_id):
+    """
+    Get a venue by id
+
+    Paramters:
+    ---------
+    venue_id (str): id of venue
+    """
     return db.session.query(Venue).get(venue_id)
 
 
 def aggregate_venues():
+    """Aggregate venues by state and city"""
     venue_query = db.session.query(Venue).order_by(Venue.state, Venue.city).all()
 
     groups = [
@@ -35,6 +43,13 @@ def aggregate_venues():
 
 
 def add_venue(form):
+    """
+    Create new venue from form data
+
+    Paramters:
+    ---------
+    form (VenueForm): form containing venue data
+    """
     genres = get_genres_list(form.getlist("genres"))
 
     venue = Venue(
@@ -56,6 +71,14 @@ def add_venue(form):
 
 
 def update_venue(venue, form):
+    """
+    Update existing venue using form data
+
+    Paramters:
+    ---------
+    venue (Venue): venue to be updated
+    form (VenueForm): form containing venue data
+    """
     genres = get_genres_list(form.getlist("genres"))
 
     venue.name = form.get("name")
@@ -74,6 +97,13 @@ def update_venue(venue, form):
 
 
 def search_venues_by_name(search_term):
+    """
+    Search for venues by name; results are case insenstive
+
+    Paramters:
+    ---------
+    search_term (str): partial name of an artist
+    """
     if search_term is None or search_term == "":
         return []
 
@@ -85,5 +115,12 @@ def search_venues_by_name(search_term):
 
 
 def delete_venue_by_id(venue_id):
+    """
+    Delete venue by id
+
+    Paramters:
+    ---------
+    venue_id (str): id of the venue
+    """
     db.session.query(Venue).filter(Venue.id == venue_id).delete()
     db.session.commit()

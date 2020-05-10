@@ -9,6 +9,13 @@ def get_artist_list():
 
 
 def add_artist(form):
+    """
+    Create artist using form data
+
+    Paramters:
+    ---------
+    form (ArtistForm): form with artist data
+    """
     genres = get_genres_list(form.getlist("genres"))
     artist = Artist(
         name=form.get("name"),
@@ -30,10 +37,25 @@ def add_artist(form):
 
 
 def get_artist_by_id(artist_id):
+    """
+    Get an artist by id
+
+    Paramters:
+    ---------
+    artist_id (str): id of the artist
+    """
     return db.session.query(Artist).get(artist_id)
 
 
 def update_artist(artist, form):
+    """
+    Update an artist using form data
+
+    Paramters:
+    ---------
+    artist (Artist): artist to be updated
+    form (ArtistForm): form containing updates
+    """
     genres = get_genres_list(form.getlist("genres"))
 
     artist.name = form.get("name")
@@ -51,6 +73,14 @@ def update_artist(artist, form):
 
 
 def search_artists_by_name(search_term):
+    """
+    Query db for artists whose names contain
+    the given search term; results are case insenstive
+
+    Paramters:
+    ---------
+    search_term (str): search term for artist name
+    """
     if search_term is None or search_term == "":
         return []
 
