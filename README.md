@@ -4,7 +4,7 @@
 
 ## Introduction
 
-(Fyyur)[https://fyyur-dev.herokuapp.com/] is a musical venue and artist booking site that facilitates the discovery and bookings of shows between local performing artists and venues. This site lets you list new artists and venues, discover them, and list shows with artists as a venue owner.
+[Fyyur](https://fyyur-dev.herokuapp.com/) is a musical venue and artist booking site that facilitates the discovery and bookings of shows between local performing artists and venues. This site lets you list new artists and venues, discover them, and list shows with artists as a venue owner.
 
 ## Development Setup (without Docker)
 
@@ -22,8 +22,8 @@
    ```
    $ export FLASK_ENV=development
    $ export APP_SETTINGS=project.config.DevelopmentConfig
-   $ export DATABASE_URL = <YOUR LOCAL DATABASE URL> # database used by app
-   $ export DATABASE_TEST_URL = <YOUR LOCAL TEST DATABASE URL> # database used by integration tests
+   $ export DATABASE_URL="<YOUR LOCAL DATABASE URL>" # database used by app
+   $ export DATABASE_TEST_URL="<YOUR LOCAL TEST DATABASE URL>" # database used by integration tests
    ```
 
 4. Run development server:
