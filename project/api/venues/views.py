@@ -6,6 +6,7 @@ from project.api.venues.crud import (
     add_venue,
     update_venue,
     search_venues_by_name,
+    delete_venue_by_id,
 )
 from project import db
 
@@ -124,3 +125,20 @@ def search_venues():
         results=response,
         search_term=request.form.get("search_term", ""),
     )
+
+
+@venues_blueprint.route("/venues/<int:venue_id>", methods=["DELETE"])
+def delete_venue(venue_id):
+    try:
+        delete_venue_by_id(venue_id)
+        flash("Venue with id " + str(venue_id) + " was successfully removed!")
+
+    except Exception as err:
+        print(err)
+        db.session.rollback()
+        flash("Unable to remove the the venue with id " + str(venue_id))
+
+    finally:
+        db.session.close()
+
+    return render_template("pages/home.html")

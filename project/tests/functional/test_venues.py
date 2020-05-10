@@ -1,5 +1,6 @@
 from project.forms import VenueForm
 from project.api.venues.models import Venue
+from project.api.misc.enums import Genres
 import pytest
 
 
@@ -95,7 +96,7 @@ def test_get_create_venue_form(test_app, template_spy):
     assert type(context["form"]) == VenueForm
 
 
-def test_create_venue(test_app, test_database):
+def test_create_venue(test_app, test_database, genres):
     client = test_app.test_client()
 
     venue_data = {
@@ -104,7 +105,7 @@ def test_create_venue(test_app, test_database):
         "state": "CA",
         "address": "11111 1 St",
         "phone": "(111)-111-111",
-        "genres": "Folk, Jazz",
+        "genres": [Genres.country.value, Genres.electronic.value],
         "website": "www.musicbythebay.com",
         "image_link": "www.musicbythebay.com/img/001",
         "facebook_link": "www.facebook.com/musicbytheby",
@@ -126,7 +127,7 @@ def test_create_venue(test_app, test_database):
 
     for key, value in venue_data.items():
         expected_value = value if key != "seeking_talent" else True
-        actual_value = venue_dict[key]
+        actual_value = venue_dict[key] if key != "genres" else venue.genres_list
         assert actual_value == expected_value
 
 
@@ -162,7 +163,7 @@ def test_edit_venue_submission(test_app, test_database, venue):
     venue_id = venue.id
     update = {
         "name": "NAME",
-        "genres": "Jazz, Reggae",
+        "genres": [Genres.jazz.value, Genres.reggae.value],
         "address": "ADDRESS",
         "city": "CITY",
         "state": "STATE",
@@ -187,7 +188,9 @@ def test_edit_venue_submission(test_app, test_database, venue):
 
     for key, value in update.items():
         expected_value = value if key != "seeking_talent" else False
-        actual_value = updated_venue_dict[key]
+        actual_value = (
+            updated_venue_dict[key] if key != "genres" else updated_venue.genres_list
+        )
         assert actual_value == expected_value
 
 
@@ -264,3 +267,30 @@ def test_search_venues(
 
     assert actual_results == results
     assert actual_search_term == search_term
+
+
+def test_delete_venue(test_app, test_database, template_spy):
+    assert len(template_spy) == 0
+
+    test_database.session.query(Venue).delete()
+    test_database.session.commit()
+
+    venue = Venue(name="NAME", city="CITY", state="AZ", address="ADDRESS")
+
+    test_database.session.add(venue)
+    test_database.session.commit()
+
+    venue_id = venue.id
+
+    client = test_app.test_client()
+    resp = client.delete(f"/venues/{venue_id}")
+
+    assert resp.status_code == 200
+    assert resp.content_type == "text/html; charset=utf-8"
+    assert len(template_spy) == 1
+
+    template, context = template_spy[0]
+
+    assert template.name == "pages/home.html"
+
+    assert test_database.session.query(Venue).filter(Venue.id == venue_id).all() == []

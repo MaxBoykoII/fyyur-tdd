@@ -29,6 +29,13 @@ def get_shows_list():
 
 
 def add_show(form):
+    """
+    Create new show
+
+    Paramters:
+    ---------
+    form (ShowForm): form containing show data
+    """
     start_time = dateutil.parser.parse(form.get("start_time"))
     show = Show(
         artist_id=form.get("artist_id"),

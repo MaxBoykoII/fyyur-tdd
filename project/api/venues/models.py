@@ -1,4 +1,5 @@
 from project import db
+from project.api.misc.models import GenreVenue
 from datetime import datetime
 from collections import namedtuple
 
@@ -7,12 +8,12 @@ class Venue(db.Model):
     __tablename__ = "Venue"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    city = db.Column(db.String(120))
-    state = db.Column(db.String(120))
-    address = db.Column(db.String(120))
+    name = db.Column(db.String, nullable=False)
+    city = db.Column(db.String(120), nullable=False)
+    state = db.Column(db.String(120), nullable=False)
+    address = db.Column(db.String(120), nullable=False)
     phone = db.Column(db.String(120))
-    genres = db.Column(db.String)
+    genres = db.relationship("Genre", secondary=GenreVenue, backref="venues")
     website = db.Column(db.String)
     image_link = db.Column(db.String)
     facebook_link = db.Column(db.String)
@@ -22,7 +23,7 @@ class Venue(db.Model):
 
     @property
     def genres_list(self):
-        genres = self.genres.split(",") if self.genres is not None else []
+        genres = [genre.name for genre in self.genres]
 
         return genres
 

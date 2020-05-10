@@ -1,5 +1,6 @@
 from datetime import datetime
 from flask_wtf import Form
+from project.api.misc.enums import Genres
 from wtforms import (
     StringField,
     SelectField,
@@ -83,30 +84,9 @@ class VenueForm(Form):
     phone = StringField("phone")
     image_link = StringField("image_link")
     genres = SelectMultipleField(
-        # TODO implement enum restriction
         "genres",
         validators=[DataRequired()],
-        choices=[
-            ("Alternative", "Alternative"),
-            ("Blues", "Blues"),
-            ("Classical", "Classical"),
-            ("Country", "Country"),
-            ("Electronic", "Electronic"),
-            ("Folk", "Folk"),
-            ("Funk", "Funk"),
-            ("Hip-Hop", "Hip-Hop"),
-            ("Heavy Metal", "Heavy Metal"),
-            ("Instrumental", "Instrumental"),
-            ("Jazz", "Jazz"),
-            ("Musical Theatre", "Musical Theatre"),
-            ("Pop", "Pop"),
-            ("Punk", "Punk"),
-            ("R&B", "R&B"),
-            ("Reggae", "Reggae"),
-            ("Rock n Roll", "Rock n Roll"),
-            ("Soul", "Soul"),
-            ("Other", "Other"),
-        ],
+        choices=[(genre.value, genre.value) for genre in Genres],
     )
     facebook_link = StringField("facebook_link", validators=[URL()])
     seeking_description = TextAreaField("seeking_description")
@@ -183,27 +163,7 @@ class ArtistForm(Form):
         # TODO implement enum restriction
         "genres",
         validators=[DataRequired()],
-        choices=[
-            ("Alternative", "Alternative"),
-            ("Blues", "Blues"),
-            ("Classical", "Classical"),
-            ("Country", "Country"),
-            ("Electronic", "Electronic"),
-            ("Folk", "Folk"),
-            ("Funk", "Funk"),
-            ("Hip-Hop", "Hip-Hop"),
-            ("Heavy Metal", "Heavy Metal"),
-            ("Instrumental", "Instrumental"),
-            ("Jazz", "Jazz"),
-            ("Musical Theatre", "Musical Theatre"),
-            ("Pop", "Pop"),
-            ("Punk", "Punk"),
-            ("R&B", "R&B"),
-            ("Reggae", "Reggae"),
-            ("Rock n Roll", "Rock n Roll"),
-            ("Soul", "Soul"),
-            ("Other", "Other"),
-        ],
+        choices=[(genre.value, genre.value) for genre in Genres],
     )
     facebook_link = StringField("facebook_link", validators=[URL()])
     website = StringField("website", validators=[URL()])
