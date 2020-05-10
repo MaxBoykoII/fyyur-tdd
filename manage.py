@@ -1,6 +1,8 @@
 from flask.cli import FlaskGroup
 import datetime
 from project import create_app, db
+from project.api.misc.models import Genre
+from project.api.misc.enums import Genres
 from project.api.shows.models import Show
 from project.api.artists.models import Artist
 from project.api.venues.models import Venue
@@ -19,13 +21,20 @@ def recreate_db():
 
 @cli.command("seed_db")
 def seed_db():
+    # Add list of genres
+    for name in Genres:
+        db.session.add(Genre(name=name.value))
+    db.session.commit()
+
+    genres = db.session.query(Genre).all()
+
     db.session.add(
         Artist(
             name="Jonny Cash",
             city="New York",
             state="NY",
             phone="674-674-674",
-            genres="Folk",
+            genres=[genres[0], genres[5]],
             image_link=None,
             facebook_link=None,
         )
@@ -37,7 +46,7 @@ def seed_db():
             city="San Francisco",
             state="CA",
             phone="216-216-216",
-            genres="Blues",
+            genres=[genres[4], genres[3]],
             image_link=None,
             facebook_link=None,
         )

@@ -1,5 +1,6 @@
 from datetime import datetime
 from project import db
+from project.api.misc.models import GenreArtist
 
 
 class Artist(db.Model):
@@ -10,7 +11,7 @@ class Artist(db.Model):
     city = db.Column(db.String(120))
     state = db.Column(db.String(120))
     phone = db.Column(db.String(120))
-    genres = db.Column(db.String(120))
+    genres = db.relationship("Genre", secondary=GenreArtist, backref="artists")
     image_link = db.Column(db.String)
     facebook_link = db.Column(db.String)
     website = db.Column(db.String)
@@ -20,8 +21,12 @@ class Artist(db.Model):
 
     @property
     def genres_list(self):
-        genres = self.genres.split(",") if self.genres is not None else []
+        genres = [genre.name for genre in self.genres]
         return genres
+
+    @property
+    def genres_str(self):
+        return ",".join(self.genres_list)
 
     @property
     def past_shows(self):

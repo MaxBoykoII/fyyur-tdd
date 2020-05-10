@@ -3,7 +3,6 @@ from project.forms import ArtistForm
 from collections import namedtuple
 
 from project import db
-from project.api.artists.models import Artist
 from project.api.artists.crud import (
     get_artist_list,
     add_artist,
@@ -81,7 +80,6 @@ def edit_artist(artist_id):
 
 @artists_blueprint.route("/artists/<int:artist_id>/edit", methods=["POST"])
 def edit_artist_submission(artist_id):
-
     try:
         artist = get_artist_by_id(artist_id)
         update_artist(artist, request.form)
@@ -109,20 +107,7 @@ def create_artist_submission():
     status_code = 201
 
     try:
-        artist = Artist(
-            name=request.form.get("name"),
-            city=request.form.get("city"),
-            state=request.form.get("state"),
-            phone=request.form.get("phone"),
-            genres=request.form.get("genres"),
-            image_link=request.form.get("image_link"),
-            facebook_link=request.form.get("facebook_link"),
-            website=request.form.get("website"),
-            seeking_venue=True if request.form.get("seeking_venue") == "y" else False,
-            seeking_description=request.form.get("seeking_description"),
-        )
-
-        add_artist(artist)
+        add_artist(request.form)
 
         flash("Artist " + request.form["name"] + " was successfully listed!")
 

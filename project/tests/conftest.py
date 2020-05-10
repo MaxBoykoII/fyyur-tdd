@@ -5,6 +5,8 @@ from flask import template_rendered
 
 from project import create_app, db
 from project.api.artists.models import Artist
+from project.api.misc.enums import Genres
+from project.api.misc.models import Genre
 from project.api.shows.models import Show
 from project.api.venues.models import Venue
 
@@ -18,7 +20,7 @@ def test_app():
 
 
 @pytest.fixture()
-def test_database():
+def test_database(test_app):
     db.create_all()
     yield db
     db.session.remove()
@@ -40,18 +42,19 @@ def template_spy(test_app):
 
 
 @pytest.fixture
-def artist(test_database):
+def artist(test_database, genres):
     artist = Artist(
         name="Brewmaster",
         city="Columbus",
         state="OH",
         phone="614-399-3453",
-        genres="Bovine Rhapsody",
         image_link="www.brewmaster.com/image.png",
         facebook_link="www.facebook.com/brewie",
         seeking_venue=True,
         seeking_description="Looking to rock the barn!",
     )
+
+    artist.genres = [genres[0], genres[1]]
 
     db = test_database
 
@@ -65,13 +68,13 @@ def artist(test_database):
 
 
 @pytest.fixture
-def artists(test_database):
+def artists(test_database, genres):
     artist1 = Artist(
         name="Guns N Petals",
         city="Columbus",
         state="OH",
         phone="614-399-3453",
-        genres="Bovine Rhapsody",
+        genres=[genres[0], genres[1]],
         image_link="www.brewmaster.com/image.png",
         facebook_link="www.facebook.com/brewie",
         website="www.brewmaster.com",
@@ -84,7 +87,7 @@ def artists(test_database):
         city="Columbus",
         state="OH",
         phone="614-399-3453",
-        genres="Bovine Rhapsody",
+        genres=[genres[4], genres[1]],
         image_link="www.brewmaster.com/image.png",
         facebook_link="www.facebook.com/brewie",
         website="wwww.mattq.com",
@@ -97,7 +100,7 @@ def artists(test_database):
         city="Columbus",
         state="OH",
         phone="614-399-3453",
-        genres="Bovine Rhapsody",
+        genres=[genres[4], genres[1]],
         image_link="www.brewmaster.com/image.png",
         facebook_link="www.facebook.com/brewie",
         website="www.wsaxb.com",
@@ -247,3 +250,16 @@ def show(test_database, artist, venue):
 
     db.session.delete(show)
     db.session.commit()
+
+
+@pytest.fixture()
+def genres(test_database):
+    genres = []
+    for name in Genres:
+        genre = Genre(name=name.value)
+        genres.append(genre)
+        test_database.session.add(genre)
+
+    test_database.session.commit()
+
+    yield genres

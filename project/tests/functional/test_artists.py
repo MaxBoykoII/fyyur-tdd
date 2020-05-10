@@ -1,4 +1,5 @@
 from project.api.artists.models import Artist
+from project.api.misc.enums import Genres
 import pytest
 
 
@@ -52,13 +53,13 @@ def test_get_artist(test_app, test_database, template_spy, artist):
     assert view_model["upcoming_shows_count"] == 0
 
 
-def test_add_artist(test_app, test_database):
+def test_add_artist(test_app, test_database, genres):
     artist_data = {
         "name": "Brewmaster",
         "city": "Columbus",
         "state": "OH",
         "phone": "614-399-3453",
-        "genres": "Bovine Rhapsody",
+        "genres": [Genres.alternative.value],
         "image_link": "www.brewmaster.com/image.png",
         "facebook_link": "www.facebook.com/brewie",
         "website": "www.brewmaster.com",
@@ -84,7 +85,7 @@ def test_add_artist(test_app, test_database):
     assert artist.city == artist_data["city"]
     assert artist.state == artist_data["state"]
     assert artist.phone == artist_data["phone"]
-    assert artist.genres == artist_data["genres"]
+    assert artist.genres_list == artist_data["genres"]
     assert artist.image_link == artist_data["image_link"]
     assert artist.facebook_link == artist_data["facebook_link"]
     assert artist.website == artist_data["website"]
@@ -128,12 +129,13 @@ def test_edit_artist_get(test_app, test_database, template_spy, artist):
 
 
 def test_edit_artist_post(test_app, test_database, artist):
+    artist_id = artist.id
     artist_data = {
         "name": "The Mighty Milk Master",
         "city": "Plain City",
         "state": "OH",
         "phone": "614-399-3453",
-        "genres": "Alternative",
+        "genres": [Genres.alternative.value, Genres.country.value],
         "image_link": "www.milkmaster.com/image.png",
         "facebook_link": "www.facebook.com/milkmaster",
         "website": "www.milkmaster.com",
@@ -143,18 +145,24 @@ def test_edit_artist_post(test_app, test_database, artist):
 
     client = test_app.test_client()
     resp = client.post(
-        "/artists/1/edit", data=artist_data, content_type="multipart/form-data"
+        f"/artists/{artist_id}/edit",
+        data=artist_data,
+        content_type="multipart/form-data",
     )
 
     assert resp.status_code == 302
     assert resp.content_type == "text/html; charset=utf-8"
 
-    updated_artist = test_database.session.query(Artist).get(1)
+    updated_artist = test_database.session.query(Artist).get(artist_id)
     updated_artist_dict = vars(updated_artist)
 
     for key, value in artist_data.items():
+        expected_value = value
         expected_value = value if key != "seeking_venue" else False
-        actual_value = updated_artist_dict[key]
+        actual_value = (
+            updated_artist_dict[key] if key != "genres" else updated_artist.genres_list
+        )
+
         assert actual_value == expected_value
 
 
