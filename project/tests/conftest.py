@@ -124,13 +124,13 @@ def artists(test_database, genres):
 
 
 @pytest.fixture
-def venue(test_database):
+def venue(test_database, genres):
     venue = Venue(
         name="The Old Barn",
         city="Plain City",
         state="OH",
         address="5147 Barn Blvd",
-        genres="Bovine Rhapsody",
+        genres=[genres[0], genres[4]],
         website="www.oldbarnoh.com",
         image_link=None,
         facebook_link=None,
@@ -147,13 +147,13 @@ def venue(test_database):
 
 
 @pytest.fixture
-def venues(test_database):
+def venues(test_database, genres):
     venue1 = Venue(
         name="The Musical Hop",
         city="San Francisco",
         state="CA",
         address="1221 Main ST",
-        genres="Rock",
+        genres=[genres[3], genres[5]],
         website="www.themusicalhop.com",
         image_link=None,
         facebook_link=None,
@@ -166,7 +166,7 @@ def venues(test_database):
         city="New York",
         state="NY",
         address="6684 South ST",
-        genres="Rock",
+        genres=[genres[4], genres[3]],
         website="www.duelingpianosbar.com",
         image_link=None,
         facebook_link=None,
@@ -179,7 +179,7 @@ def venues(test_database):
         city="San Francisco",
         state="CA",
         address="6684 South ST",
-        genres="Rock",
+        genres=[genres[8], genres[2]],
         website="www.parksquaremusic.com",
         image_link=None,
         facebook_link=None,
@@ -201,11 +201,11 @@ def venues(test_database):
 
 
 @pytest.fixture()
-def venue_data():
+def venue_data(genres):
     venue_data = {
         "id": 1,
         "name": "The Musical Hop",
-        "genres": ["Jazz", "Reggae", "Swing", "Classical", "Folk"],
+        "genres": [Genres.alternative.value, Genres.blues.value],
         "address": "1015 Folsom Street",
         "city": "San Francisco",
         "state": "CA",
@@ -220,7 +220,7 @@ def venue_data():
     venue = Venue(
         id=venue_data["id"],
         name=venue_data["name"],
-        genres=",".join(venue_data["genres"]),
+        genres=[genres[0], genres[1]],
         address=venue_data["address"],
         city=venue_data["city"],
         state=venue_data["state"],

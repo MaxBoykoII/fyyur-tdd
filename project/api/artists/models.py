@@ -25,10 +25,6 @@ class Artist(db.Model):
         return genres
 
     @property
-    def genres_str(self):
-        return ",".join(self.genres_list)
-
-    @property
     def past_shows(self):
         shows = [
             show.venue_data for show in self.shows if show.start_time < datetime.now()

@@ -58,7 +58,7 @@ def seed_db():
             city="Plain City",
             state="OH",
             address="5147 Barn Blvd",
-            genres="Bovine Rhapsody",
+            genres=[genres[5], genres[2]],
             website="www.oldbarnoh.com",
             image_link=None,
             facebook_link=None,

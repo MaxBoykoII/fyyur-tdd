@@ -1,5 +1,6 @@
 from project import db
 from project.api.venues.models import Venue
+from project.api.misc.crud import get_genres_list
 from itertools import groupby
 from sqlalchemy import func
 
@@ -34,13 +35,15 @@ def aggregate_venues():
 
 
 def add_venue(form):
+    genres = get_genres_list(form.getlist("genres"))
+
     venue = Venue(
         name=form.get("name"),
         city=form.get("city"),
         state=form.get("state"),
         address=form.get("address"),
         phone=form.get("phone"),
-        genres=form.get("genres"),
+        genres=genres,
         facebook_link=form.get("facebook_link"),
         image_link=form.get("image_link"),
         website=form.get("website"),
@@ -53,12 +56,14 @@ def add_venue(form):
 
 
 def update_venue(venue, form):
+    genres = get_genres_list(form.getlist("genres"))
+
     venue.name = form.get("name")
     venue.city = form.get("city")
     venue.state = form.get("state")
     venue.address = form.get("address")
     venue.phone = form.get("phone")
-    venue.genres = form.get("genres")
+    venue.genres = genres
     venue.facebook_link = form.get("facebook_link")
     venue.image_link = form.get("image_link")
     venue.website = form.get("website")

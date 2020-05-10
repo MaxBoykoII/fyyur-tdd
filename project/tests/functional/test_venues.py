@@ -1,5 +1,6 @@
 from project.forms import VenueForm
 from project.api.venues.models import Venue
+from project.api.misc.enums import Genres
 import pytest
 
 
@@ -95,7 +96,7 @@ def test_get_create_venue_form(test_app, template_spy):
     assert type(context["form"]) == VenueForm
 
 
-def test_create_venue(test_app, test_database):
+def test_create_venue(test_app, test_database, genres):
     client = test_app.test_client()
 
     venue_data = {
@@ -104,7 +105,7 @@ def test_create_venue(test_app, test_database):
         "state": "CA",
         "address": "11111 1 St",
         "phone": "(111)-111-111",
-        "genres": "Folk, Jazz",
+        "genres": [Genres.country.value, Genres.electronic.value],
         "website": "www.musicbythebay.com",
         "image_link": "www.musicbythebay.com/img/001",
         "facebook_link": "www.facebook.com/musicbytheby",
@@ -126,7 +127,7 @@ def test_create_venue(test_app, test_database):
 
     for key, value in venue_data.items():
         expected_value = value if key != "seeking_talent" else True
-        actual_value = venue_dict[key]
+        actual_value = venue_dict[key] if key != "genres" else venue.genres_list
         assert actual_value == expected_value
 
 
@@ -162,7 +163,7 @@ def test_edit_venue_submission(test_app, test_database, venue):
     venue_id = venue.id
     update = {
         "name": "NAME",
-        "genres": "Jazz, Reggae",
+        "genres": [Genres.jazz.value, Genres.reggae.value],
         "address": "ADDRESS",
         "city": "CITY",
         "state": "STATE",
@@ -187,7 +188,9 @@ def test_edit_venue_submission(test_app, test_database, venue):
 
     for key, value in update.items():
         expected_value = value if key != "seeking_talent" else False
-        actual_value = updated_venue_dict[key]
+        actual_value = (
+            updated_venue_dict[key] if key != "genres" else updated_venue.genres_list
+        )
         assert actual_value == expected_value
 
 
